@@ -8,11 +8,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
+import android.webkit.WebView;
+import android.webkit.WebSettings;
+import android.webkit.WebViewClient;
 
 import org.ipv8.android.service.IPV8Service;
 
 public class MainActivity extends BaseActivity {
 
+    private WebView mWebView;
     public static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 110;
 
     static {
@@ -67,6 +71,14 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mWebView = (WebView) findViewById(R.id.activity_main_webview);
+
+        // Enable Javascript
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
+        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.loadUrl("http://127.0.0.1:8085/gui");
 
         // Write permissions on sdcard?
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
