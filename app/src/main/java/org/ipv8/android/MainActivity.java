@@ -11,6 +11,10 @@ import android.text.TextUtils;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceError;
+import android.os.Handler;
+import java.lang.Runnable;
 
 import org.ipv8.android.service.IPV8Service;
 
@@ -18,6 +22,7 @@ public class MainActivity extends BaseActivity {
 
     private WebView mWebView;
     public static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 110;
+    public static final String url = "http://127.0.0.1:8085/gui";
 
     static {
         // Backwards compatibility for vector graphics
@@ -71,14 +76,6 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mWebView = (WebView) findViewById(R.id.activity_main_webview);
-
-        // Enable Javascript
-        WebSettings webSettings = mWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.loadUrl("http://127.0.0.1:8085/gui");
 
         // Write permissions on sdcard?
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -86,5 +83,31 @@ public class MainActivity extends BaseActivity {
         } else {
             startService();
         }
+
+        mWebView = (WebView) findViewById(R.id.activity_main_webview);
+        // Enable Javascript
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        // Load the GUI
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                // Show custom error page
+                if (view != null){
+                    String htmlData ="<html><body><div align=\"center\" >Please wait while loading backend..</div></body>";
+                    view.loadDataWithBaseURL(null, htmlData, "text/html", "UTF-8", null);
+                }
+
+                // Reload after 1s. Should happen only when IPv8 is still loading.
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.loadUrl(url);
+                    }
+                }, 1000);
+            }
+        });
+        mWebView.loadUrl(url);
     }
 }
