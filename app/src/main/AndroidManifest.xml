@@ -31,7 +31,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="IPv8 Attestation App"
+            android:label="Regie op Gegevens"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

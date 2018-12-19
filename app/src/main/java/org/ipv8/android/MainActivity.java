@@ -108,6 +108,20 @@ public class MainActivity extends BaseActivity {
                 }, 1000);
             }
         });
-        mWebView.loadUrl(url);
+        if (savedInstanceState == null) {
+            mWebView.loadUrl(url);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mWebView.saveState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mWebView.restoreState(savedInstanceState);
     }
 }
