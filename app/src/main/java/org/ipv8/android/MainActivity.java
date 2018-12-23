@@ -1,6 +1,7 @@
 package org.ipv8.android;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -14,15 +15,19 @@ import android.webkit.WebViewClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceError;
 import android.os.Handler;
+import android.util.Log;
 import java.lang.Runnable;
 
 import org.ipv8.android.service.IPV8Service;
 
 public class MainActivity extends BaseActivity {
 
+    private Class<?> mClss;
     private WebView mWebView;
-    public static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 110;
-    public static final String url = "http://127.0.0.1:8085/gui";
+    private JavaScriptInterface JSInterface;
+    private static final int ZBAR_CAMERA_PERMISSION = 1;
+    private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 110;
+    private static final String url = "http://127.0.0.1:8085/gui";
 
     static {
         // Backwards compatibility for vector graphics
@@ -88,6 +93,9 @@ public class MainActivity extends BaseActivity {
         // Enable Javascript
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        // Set JavascriptInterface
+        JSInterface = new JavaScriptInterface(this);
+        mWebView.addJavascriptInterface(JSInterface, "android");
         // Load the GUI
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -123,5 +131,39 @@ public class MainActivity extends BaseActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mWebView.restoreState(savedInstanceState);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String qrcode = data.getExtras().getString("qrcode");
+            mWebView.loadUrl("javascript:onScannerResult('" + qrcode + "')");
+        }
+    }
+
+    public void launchActivity(Class<?> clss) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            mClss = clss;
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, ZBAR_CAMERA_PERMISSION);
+        } else {
+            Intent intent = new Intent(this, clss);
+            startActivityForResult(intent,1);
+        }
+    }
+
+
+    public class JavaScriptInterface {
+        Context mContext;
+
+        JavaScriptInterface(Context c) {
+            mContext = c;
+        }
+
+        @android.webkit.JavascriptInterface
+        public void launchScanner()
+        {
+            launchActivity(ScannerActivity.class);
+        }
     }
 }
