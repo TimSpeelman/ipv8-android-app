@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebResourceError;
 import android.os.Handler;
 import android.util.Log;
@@ -114,6 +115,12 @@ public class MainActivity extends BaseActivity {
                         mWebView.loadUrl(url);
                     }
                 }, 1000);
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                Log.d("tlswitnessWebview", "requesting: " + url);
+                return super.shouldInterceptRequest(view, url);
             }
         });
         if (savedInstanceState == null) {
