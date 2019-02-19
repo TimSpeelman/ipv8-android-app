@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
@@ -97,6 +98,7 @@ public class MainActivity extends BaseActivity {
         // Set JavascriptInterface
         JSInterface = new JavaScriptInterface(this);
         mWebView.addJavascriptInterface(JSInterface, "android");
+        mWebView.setWebContentsDebuggingEnabled(true);
         // Load the GUI
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -125,6 +127,34 @@ public class MainActivity extends BaseActivity {
         });
         if (savedInstanceState == null) {
             mWebView.loadUrl(url);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == WRITE_STORAGE_PERMISSION_REQUEST_CODE) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        startService();
+                    } else {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_REQUEST_CODE);
+                    }
+                }
+            }
+        }
+        else if (requestCode == ZBAR_CAMERA_PERMISSION) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.CAMERA)) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        launchActivity(ScannerActivity.class);
+                    } else {
+                        // Don't retry
+                    }
+                }
+            }
         }
     }
 
