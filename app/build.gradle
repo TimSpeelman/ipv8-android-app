@@ -19,7 +19,7 @@ model {
         compileSdkVersion 24
 
         defaultConfig {
-            applicationId "org.internetofmoney.android"
+            applicationId "nl.tudelft.regieopgegevens"
             // Android Beam supports large payload transfers
             // over Bluetooth since api level 16
             // Dynamic linker works properly since api level 18
