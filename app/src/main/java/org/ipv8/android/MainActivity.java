@@ -36,6 +36,11 @@ public class MainActivity extends BaseActivity {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
+    public void onDestroy() {
+        shutdown();
+        super.onDestroy();
+    }
+
     private void shutdown() {
         killService();
 
