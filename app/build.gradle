@@ -19,13 +19,14 @@ model {
         compileSdkVersion 24
 
         defaultConfig {
-            applicationId "nl.tudelft.regieopgegevens"
+            applicationId "nl.tudelft.delftopenwallet"
             // Android Beam supports large payload transfers
             // over Bluetooth since api level 16
             // Dynamic linker works properly since api level 18
             minSdkVersion.apiLevel 21
             // Compatible up to api level 23
             // Avoid new strict file security measures of api level 24
+            // targetSdkVersion.apiLevel 28
             targetSdkVersion.apiLevel 26
             // Auto increment, see above
             versionCode code

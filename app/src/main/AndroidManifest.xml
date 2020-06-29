@@ -32,7 +32,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="Regie op Gegevens"
+            android:label="Delft Open Wallet"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -60,7 +60,7 @@
         </activity>
         <activity
             android:name=".ScannerActivity"
-            android:label="Regie op Gegevens">
+            android:label="Delft Open Wallet">
         </activity>
     </application>
 
